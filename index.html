@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PATH Train Departures</title>
+</head>
+<body>
+    <h1>Next PATH Train Departures</h1>
+    <label for="station">Select a Station:</label>
+    <select id="station">
+        <option value="NWK">Newark</option>
+        <option value="JSQ">Journal Square</option>
+        <option value="HOB">Hoboken</option>
+        <option value="33">33rd Street</option>
+    </select>
+
+    <ul id="schedule"></ul>
+
+    <script>
+        async function fetchTrainTimes(station) {
+            const apiUrl = `https://api.example.com/path/departures?station=${station}`; // Replace with actual API
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+
+            const scheduleList = document.getElementById("schedule");
+            scheduleList.innerHTML = ""; // Clear previous results
+
+            data.departures.forEach(train => {
+                const departureTime = new Date(train.time);
+                const minutesAway = Math.round((departureTime - new Date()) / 60000);
+                const listItem = document.createElement("li");
+                listItem.textContent = `${departureTime.toLocaleTimeString()} - in ${minutesAway} min`;
+                scheduleList.appendChild(listItem);
+            });
+        }
+
+        document.getElementById("station").addEventListener("change", function () {
+            fetchTrainTimes(this.value);
+        });
+
+        // Initial load
+        fetchTrainTimes(document.getElementById("station").value);
+    </script>
+</body>
+</html>
